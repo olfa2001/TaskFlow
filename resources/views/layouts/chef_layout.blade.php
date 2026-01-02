@@ -49,17 +49,18 @@
 
         {{-- Menu --}}
         <ul class="flex-1 space-y-4 text-gray-600 text-lg">
-            @php
-                $menuItems = [
-                    ['route' => 'dashboard.chef', 'icon' => 'ic_dashboard.png', 'label' => 'Dashboard'],
-                    ['route' => 'chef.projects', 'icon' => 'ic_projects.png', 'label' => 'Projects'],
-                    ['route' => 'chef.tasks', 'icon' => 'ic_teams.png', 'label' => 'Tasks'],
-                    ['route' => 'chef.team', 'icon' => 'ic_teams.png', 'label' => 'Teams'],
-                    ['route' => 'chef.reports', 'icon' => 'ic_reports.png', 'label' => 'Reports'],
-                    ['route' => 'chef.messages', 'icon' => 'ic_messages.png', 'label' => 'Messages'],
-                    ['route' => 'chef.settings', 'icon' => 'ic_settings.png', 'label' => 'Settings'],
-                ];
-            @endphp
+           @php
+$menuItems = [
+    ['route' => 'dashboard.chef', 'icon' => 'ic_dashboard.png', 'label' => 'Dashboard'],
+    ['route' => 'projects.index', 'icon' => 'ic_projects.png', 'label' => 'Projects'],
+    ['route' => 'chef.tasks', 'icon' => 'ic_teams.png', 'label' => 'Tasks'],
+    ['route' => 'chef.team', 'icon' => 'ic_teams.png', 'label' => 'Teams'],
+    ['route' => 'chef.reports', 'icon' => 'ic_reports.png', 'label' => 'Reports'],
+    ['route' => 'chef.messages', 'icon' => 'ic_messages.png', 'label' => 'Messages'],
+    ['route' => 'chef.settings', 'icon' => 'ic_settings.png', 'label' => 'Settings'],
+];
+@endphp
+
 
             @foreach($menuItems as $item)
                 @php

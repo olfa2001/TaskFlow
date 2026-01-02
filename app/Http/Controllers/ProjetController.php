@@ -8,77 +8,77 @@ use Illuminate\Http\Request;
 
 class ProjetController extends Controller
 {
-   public function index(Request $request)
-{
-    $filter = $request->get('filter', 'all');
+    // Liste des projets
+    public function index(Request $request)
+    {
+        $filter = $request->get('filter', 'all');
 
-    $query = Project::with(['etat', 'superviseur']);
+        $query = Projet::with(['etat', 'superviseur']);
 
-    if ($filter === 'favorites') {
-        $query->where('is_favorite', 1);
+        if ($filter === 'favorites') {
+            $query->where('is_favorite', 1);
+        }
+
+        if ($filter === 'archived') {
+            $query->where('id_etat', 4);
+        }
+
+        $projects = $query->get();
+        $users = User::all();
+
+        return view('projects.index', compact('projects', 'filter', 'users'));
     }
 
-    if ($filter === 'archived') {
-        $query->where('id_etat', 4);
+    // Ajouter/enlever aux favoris
+    public function toggleFavorite(Projet $project)
+    {
+        $project->update([
+            'is_favorite' => !$project->is_favorite
+        ]);
+
+        return back();
     }
 
-    $projects = $query->get();
+    // Ajouter un superviseur
+    public function addSupervisor(Request $request, Projet $project)
+    {
+        $request->validate([
+            'superviseur_id' => 'required|exists:users,id',
+        ]);
 
-    $users = User::all();
+        $user = User::find($request->superviseur_id);
 
+        if ($user->role->role !== 'Superviseur') {
+            return back()->withErrors(['superviseur_id' => 'L’utilisateur doit être un superviseur.']);
+        }
 
-    return view('projects.index', compact('projects', 'filter', 'users'));
-}
+        $superviseurs = $project->other_superviseurs ?? [];
 
-public function toggleFavorite(Project $project)
-{
-    $project->update([
-        'is_favorite' => !$project->is_favorite
-    ]);
+        if (!in_array($user->id, $superviseurs) && $user->id != $project->id_user) {
+            $superviseurs[] = $user->id;
+        }
 
-    return back();
-}
-public function addSupervisor(Request $request, Project $project)
-{
-    $request->validate([
-        'superviseur_id' => 'required|exists:users,id',
-    ]);
+        $project->other_superviseurs = $superviseurs;
+        $project->save();
 
-    $user = User::find($request->superviseur_id);
-
-    if($user->role->role !== 'Superviseur'){
-        return back()->withErrors(['superviseur_id' => 'L’utilisateur doit être un superviseur.']);
+        return back()->with('success', 'Superviseur ajouté avec succès !');
     }
 
-    $superviseurs = $project->other_superviseurs ?? [];
-
-
-    if (!in_array($user->id, $superviseurs) && $user->id != $project->id_user) {
-        $superviseurs[] = $user->id;
-    }
-
-    $project->other_superviseurs = $superviseurs;
-    $project->save();
-
-    return back()->with('success', 'Superviseur ajouté avec succès !');
-}
-
-
-
+    // Formulaire création
     public function create()
     {
         $superviseurs = User::whereHas('role', fn($q) => $q->where('role','Superviseur'))->get();
-
         return view('projects.form', compact('superviseurs'));
     }
 
-    public function edit(Project $project)
+    // Formulaire édition
+    public function edit(Projet $project)
     {
         $superviseurs = User::whereHas('role', fn($q) => $q->where('role','Superviseur'))->get();
-
         return view('projects.form', compact('project', 'superviseurs'));
     }
 
+    // Enregistrer un projet
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -98,7 +98,7 @@ public function addSupervisor(Request $request, Project $project)
                          ->withInput();
         }
 
-        Project::create([
+        Projet::create([
             'nom_projet' => $validated['nom_projet'],
             'description'=> $request->description,
             'date_debut' => $validated['date_debut'],
@@ -111,7 +111,8 @@ public function addSupervisor(Request $request, Project $project)
                          ->with('success', 'Projet créé avec succès !');
     }
 
-    public function update(Request $request, Project $project)
+    // Mettre à jour un projet
+    public function update(Request $request, Projet $project)
     {
         $validated = $request->validate([
             'nom_projet' => 'required|unique:projets,nom_projet,' . $project->id,
@@ -143,14 +144,16 @@ public function addSupervisor(Request $request, Project $project)
                          ->with('success', 'Projet mis à jour avec succès !');
     }
 
-    public function destroy(Project $project)
+    // Supprimer un projet
+    public function destroy(Projet $project)
     {
         $project->delete();
         return redirect()->route('projects.index')
                          ->with('success', 'Projet supprimé !');
     }
 
-    public function archive(Project $project)
+    // Archiver un projet
+    public function archive(Projet $project)
     {
         $project->update(['id_etat' => 4]);
         return redirect()->route('projects.index')
