@@ -13,7 +13,7 @@ class LoginController extends Controller
     // Show login form
     public function showLoginForm()
     {
-        return view('auth.login'); // your login.blade.php
+        return view('auth.login');
     }
 
     // Handle login
@@ -27,7 +27,7 @@ class LoginController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if ($user && Hash::check($request->password, $user->pw)) {
-            Auth::login($user); // log in user
+            Auth::login($user);
             $request->session()->regenerate();
 
             // Redirect based on role
@@ -48,6 +48,8 @@ class LoginController extends Controller
         return back()->withErrors([
             'email' => 'Invalid credentials',
         ]);
+        add(Auth::id(), Auth::user()->role->role);
+
     }
 
 

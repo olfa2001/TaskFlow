@@ -1,10 +1,10 @@
 <?php
 
 namespace App\Models;
-
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-
 class User extends Authenticatable
 {
     use Notifiable;
@@ -17,38 +17,26 @@ class User extends Authenticatable
 
     protected $hidden = ['pw'];
 
-    /*
-    |--------------------------------------------------------------------------
-    | Authentication
-    |--------------------------------------------------------------------------
-    */
 
-    // Tell Laravel to use `pw` as password
+
     public function getAuthPassword()
     {
         return $this->pw;
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Accessors (THIS IS THE KEY 🔑)
-    |--------------------------------------------------------------------------
-    */
-
-    // Make Laravel think "name" exists
+  
     public function getNameAttribute()
     {
         return $this->prenom . ' ' . $this->nom;
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Relationships
-    |--------------------------------------------------------------------------
-    */
 
     public function role()
     {
         return $this->belongsTo(Role::class, 'id_role');
     }
+     public function projets() {
+        return $this->hasMany(Project::class, 'id_user');
+    }
+
 }
