@@ -24,31 +24,41 @@ class LoginController extends Controller
             'password' => 'required',
         ]);
 
+        // 1. Check if email exists
         $user = User::where('email', $request->email)->first();
 
-        if ($user && Hash::check($request->password, $user->pw)) {
-            Auth::login($user); // log in user
-            $request->session()->regenerate();
-
-            // Redirect based on role
-            switch ($user->role->role) { // assuming User model has relation 'role'
-                case 'Chef de projet':
-                    return redirect()->route('dashboard.chef'); // dashboard route
-                case 'Administrateur':
-                    return redirect()->route('dashboard.admin');
-                case 'Superviseur':
-                    return redirect()->route('dashboard.superviseur');
-                case 'Contributeur de projet':
-                    return redirect()->route('dashboard.contributeur');
-                default:
-                    return redirect()->route('home'); // fallback
-            }
+        if (!$user) {
+            return back()->withErrors([
+                'email' => 'This email address is not registered.',
+            ])->withInput();
         }
 
-        return back()->withErrors([
-            'email' => 'Invalid credentials',
-        ]);
+        // 2. Check password
+        if (!Hash::check($request->password, $user->password)) {
+            return back()->withErrors([
+                'password' => 'Incorrect password.',
+            ])->withInput();
+        }
+
+        // 3. Login success
+        Auth::login($user);
+        $request->session()->regenerate();
+
+        // 4. Redirect by role
+        switch ($user->role->role) {
+            case 'Chef de projet':
+                return redirect()->route('dashboard.chef');
+            case 'Administrateur':
+                return redirect()->route('dashboard.admin');
+            case 'Superviseur':
+                return redirect()->route('dashboard.superviseur');
+            case 'Contributeur de projet':
+                return redirect()->route('dashboard.contributeur');
+            default:
+                return redirect()->route('home');
+        }
     }
+
 
 
     // Logout

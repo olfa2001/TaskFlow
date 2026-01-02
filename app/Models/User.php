@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Role;
+use App\Models\Projet; 
 
 class User extends Authenticatable
 {
@@ -15,7 +17,19 @@ class User extends Authenticatable
 
     public $timestamps = false; // IMPORTANT (your table has no created_at)
 
-    protected $hidden = ['pw'];
+    protected $hidden = ['password'];
+
+    protected $fillable = [
+        'nom',
+        'prenom',
+        'email',
+        'phone',
+        'password',
+        'date_naissance',
+        'profession',
+        'photo'
+    ];
+
 
     /*
     |--------------------------------------------------------------------------
@@ -26,7 +40,7 @@ class User extends Authenticatable
     // Tell Laravel to use `pw` as password
     public function getAuthPassword()
     {
-        return $this->pw;
+        return $this->password;
     }
 
     /*
@@ -51,4 +65,13 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Role::class, 'id_role');
     }
+
+    public function projets()
+    {
+        return $this->hasMany(Projet::class, 'id_user');
+    }
+
+
+
+
 }
