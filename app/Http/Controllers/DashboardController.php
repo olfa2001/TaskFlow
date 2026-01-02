@@ -6,10 +6,20 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 
+use App\Http\Controllers\Controller;
+
+
 
 class DashboardController extends Controller
 {
     //
+    
+    public function __construct()
+    {
+        // Protège toutes les routes de ce contrôleur : nécessite un utilisateur connecté
+        $this->middleware('auth');
+    }
+
     
     // DashboardController.php
     public function chef()
