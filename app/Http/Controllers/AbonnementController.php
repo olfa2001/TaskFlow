@@ -1,49 +1,92 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\Abonnement; 
-
+use App\Models\Abonnement;
+use App\Models\Role;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\DB;
 class AbonnementController extends Controller
 {
-// Liste + filtre par onglet (individual|business)
-
-    // ⬅️ renommé selon ta demande
-    public function index_abonnement(Request $request)
+    public function index()
     {
-        $categorie = $request->query('categorie', 'individual');
 
-        $plans = Abonnement::query()
-            ->when($categorie === 'business', function ($q) {
-                $q->whereRaw("LOWER(abonnement) LIKE '%business%'");
-            }, function ($q) {
-                $q->whereRaw("LOWER(abonnement) NOT LIKE '%business%'");
-            })
-            ->orderByRaw('CASE LOWER(abonnement)
-                WHEN "basic" THEN 1
-                WHEN "pro" THEN 2
-                WHEN "business" THEN 3
-                ELSE 4 END')
-            ->get();
-
-        // ⬅️ nouvelle vue: abonnements/abonnement.blade.php
-        return view('abonnements.abonnement', compact('plans', 'categorie'));
+        return view('dashboard.admin', compact('abonnements'/*, 'subscriptionLabels', 'subscriptionValues', 'subscriptionTotal'*/));
+    }
+    
+    public function index_abonnement()
+    {
+        return view('abonnements.abonnement');
+    }
+     public function gest_abonnement()
+    {
+        $abonnements = Abonnement::all();
+        return view('abonnements.gest_abonnements', compact('abonnements'));
+    }
+    public function gest_roles()
+    {
+        $roles = Role::all();
+        return view('roles.gest_roles', compact('roles'));
     }
 
-    // Action "Choisir" (inchangée)
-    public function choose(Request $request)
+
+    public function create()
     {
-        $request->validate([
-            'abonnement_id' => ['required', 'exists:abonnements,id'],
+        return view('abonnements.create');
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'abonnement' => 'required|string|max:150',
+            'description' => 'nullable|string|max:500',
+            'prix'        => 'required|numeric|min:0',
         ]);
 
-        $plan = Abonnement::findOrFail($request->abonnement_id);
-
-        // Ici tu peux enregistrer le choix de l’utilisateur si tu veux
-        return redirect()
-            ->route('abonnements.index', ['categorie' => $plan->categorie])
-            ->with('success', "Abonnement « {$plan->abonnement} » sélectionné.");
+        Abonnement::create($validated);
+        return redirect()->route('admin.abonnements.gest_abonnements')->with('success', 'Offre créée.');
     }
+
+    
+// Edit: afficher le formulaire
+
+// Edit: affiche le formulaire (déjà correct)
+public function edit(Abonnement $abonnement) {
+    return view('abonnements.edit', compact('abonnement'));
 }
 
+// Update: traiter la mise à jour (corrigé)
+public function update(Request $request, Abonnement $abonnement) {
+    $validated = $request->validate([
+        'abonnement'  => ['required', 'string', 'max:150'],
+        'description' => ['nullable', 'string', 'max:500'],
+        'prix'        => ['required', 'numeric', 'min:0'],
+    ]);
+
+    $abonnement->update($validated);
+
+    return redirect()->route('admin.abonnements.gest_abonnements')
+                     ->with('status', 'Offre mise à jour avec succès.');
+}
+
+    public function destroy
+(Request $request, Abonnement $abonnement)
+{
+    $id = $abonnement->id;
+    $abonnement->delete();
+
+    // Si l’appel AJAX envoie Accept: application/json, on renvoie un JSON ou 204
+    if ($request->expectsJson()) {
+        return response()->json([
+            'message' => 'Offre supprimée.',
+            'id' => $id,
+        ], 200);
+        // ou : return response()->noContent(); // 204 No Content
+    }
+
+    // fallback (cas non-AJAX)
+    return redirect()->route('admin.abonnements.gest_abonnements')->with('success', 'Offre supprimée.');
+
+
+
+    }
+}

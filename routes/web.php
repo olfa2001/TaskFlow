@@ -3,18 +3,66 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProjetController;
+use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AbonnementController;
 
+/*
+|--------------------------------------------------------------------------
+| Page d'accueil
+|--------------------------------------------------------------------------
+*/
 Route::get('/', function () {
     return view('home');
-})->name('home'); 
-
+})->name('home');
+/*
+|--------------------------------------------------------------------------
+| Dashboard Admin - Abonnements
+|--------------------------------------------------------------------------
+*/
 // GET /abonnements  →  AbonnementController@index_abonnement
 Route::get('/abonnements', [AbonnementController::class, 'index_abonnement'])
     ->name('abonnements.index');
 
 Route::post('/abonnements/choisir', [AbonnementController::class, 'choose'])
     ->name('abonnements.choose');
+
+// Gestion des abonnements (Admin)
+Route::get('/admin/abonnements', [AbonnementController::class, 'gest_abonnement'])
+    ->name('admin.abonnements.gest_abonnements')
+    ->middleware('auth');
+// Gestion des roles (Admin)
+Route::get('/admin/roles', [AbonnementController::class, 'gest_roles'])
+    ->name('admin.roles.gest_roles')
+    ->middleware('auth');
+// Gestion des utilisateurs (Admin)
+Route::get('/admin/utilisateurs', [AbonnementController::class, 'gest_utilisateurs'])
+    ->name('admin.utilisateurs.gest_utilisateurs')
+    ->middleware('auth');
+
+ // Create
+    Route::get('/admin/abonnements/create', [AbonnementController::class, 'create'])
+        ->name('admin.abonnements.create');
+
+    // Store
+    Route::post('/admin/abonnements', [AbonnementController::class, 'store'])
+        ->name('admin.abonnements.store');
+
+    // Edit
+    Route::get('/admin/abonnements/{abonnement}/edit', [AbonnementController::class, 'edit'])
+        ->name('admin.abonnements.edit');
+
+    // Update
+    Route::put('/admin/abonnements/{abonnement}', [AbonnementController::class, 'update'])
+        ->name('admin.abonnements.update');
+
+    // Destroy
+    Route::delete('/admin/abonnements/{abonnement}', [AbonnementController::class, 'destroy'])
+        ->name('admin.abonnements.destroy');
+
+/*
+|--------------------------------------------------------------------------*/
 
 // Login routes
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -35,9 +83,60 @@ Route::get('/dashboard/supervisor', [DashboardController::class, 'supervisor'])-
 name('dashboard.supervisor');
 Route::get('/dashboard/member', [DashboardController::class, 'member'])->name('dashboard.member');
 
-Route::prefix('chef')->middleware(['auth'])->group(function() {
-    Route::get('/home', [DashboardController::class, 'index'])->name('chef.home');
-    Route::get('/projects', [DashboardController::class, 'projects'])->name('chef.projects');
-    Route::get('/team', [DashboardController::class, 'team'])->name('chef.team');
-    Route::get('/settings', [DashboardController::class, 'settings'])->name('chef.settings');
-});
+Route::get('/projects/create', [ProjetController::class, 'create'])
+    ->name('projects.create');
+
+Route::post('/projects', [ProjetController::class, 'store'])
+    ->name('projects.store');
+
+Route::get('/projects/{project}/edit', [ProjetController::class, 'edit'])
+    ->name('projects.edit');
+
+Route::put('/projects/{project}', [ProjetController::class, 'update'])
+    ->name('projects.update');
+
+Route::delete('/projects/{project}', [ProjetController::class, 'destroy'])
+    ->name('projects.destroy');
+
+Route::post('/projects/{project}/archive', [ProjetController::class, 'archive'])
+    ->name('projects.archive');
+
+Route::post('/projects/{project}/favorite', [ProjetController::class, 'toggleFavorite'])
+    ->name('projects.favorite');
+
+Route::post('/projects/{project}/add-supervisor', [ProjetController::class, 'addSupervisor'])
+    ->name('projects.updateSupervisor');
+
+/*
+|--------------------------------------------------------------------------
+| Pages Chef (DashboardController)
+|--------------------------------------------------------------------------
+*/
+Route::get('/team', [DashboardController::class, 'team'])
+    ->name('chef.team');
+
+Route::get('/tasks', [DashboardController::class, 'tasks'])
+    ->name('chef.tasks');
+
+Route::get('/reports', [DashboardController::class, 'reports'])
+    ->name('chef.reports');
+
+Route::get('/messages', [DashboardController::class, 'messages'])
+    ->name('chef.messages');
+
+/*
+|--------------------------------------------------------------------------
+| Paramètres & Profil
+|--------------------------------------------------------------------------
+*/
+Route::get('/settings', [SettingsController::class, 'index'])
+    ->name('chef.settings');
+
+Route::post('/settings', [SettingsController::class, 'update'])
+    ->name('chef.settings.update');
+
+Route::get('/settings/profile', [ProfileController::class, 'index'])
+    ->name('chef.profile');
+
+Route::post('/settings/update-bio', [ProfileController::class, 'updateBio'])
+    ->name('chef.updateBio');

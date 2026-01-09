@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+    <meta name="csrf-token" content="{{ csrf_token() }}"> <!-- CSRF Token -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@yield('title', 'TaskFlow')</title>
@@ -39,6 +40,11 @@
 
     <!-- FOOTER -->
     @include('layouts.footer')
+    
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js@art.umd.min.js</script>
+@stack('scripts')
+
+    
 </body>
 </html>

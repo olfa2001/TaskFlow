@@ -51,13 +51,9 @@
         <ul class="flex-1 space-y-4 text-gray-600 text-lg">
            @php
 $menuItems = [
-    ['route' => 'dashboard.chef', 'icon' => 'ic_dashboard.png', 'label' => 'Dashboard'],
-    ['route' => 'projects.index', 'icon' => 'ic_projects.png', 'label' => 'Projects'],
-    ['route' => 'chef.tasks', 'icon' => 'ic_teams.png', 'label' => 'Tasks'],
-    ['route' => 'chef.team', 'icon' => 'ic_teams.png', 'label' => 'Teams'],
-    ['route' => 'chef.reports', 'icon' => 'ic_reports.png', 'label' => 'Reports'],
-    ['route' => 'chef.messages', 'icon' => 'ic_messages.png', 'label' => 'Messages'],
-    ['route' => 'chef.settings', 'icon' => 'ic_settings.png', 'label' => 'Settings'],
+    ['route' => 'dashboard.admin', 'icon' => 'ic_dashboard.png', 'label' => 'Dashboard'],
+    ['route' => 'admin.abonnements.gest_abonnements', 'icon' => 'ic_projects.png', 'label' => 'Gestion Abonnements'],
+    ['route' => 'admin.roles.gest_roles', 'icon' => 'ic_projects.png', 'label' => 'Gestion Rôles'],
 ];
 @endphp
 
@@ -100,7 +96,7 @@ $menuItems = [
         {{-- TOP MENU --}}
         <header class="h-20 bg-white shadow-sm flex items-center px-8">
             <h1 class="text-xl font-semibold text-gray-800">
-                @yield('page-title', 'Projets')
+                @yield('page-title', 'Interface super admin')
             </h1>
 
             {{-- SEARCH --}}
@@ -124,7 +120,7 @@ $menuItems = [
                             <p class="text-sm font-semibold text-gray-800">
                                 {{ $user->prenom ?? '' }} {{ $user->nom ?? '' }}
                             </p>
-                            <p class="text-xs text-gray-400">Chef de projet</p>
+                            <p class="text-xs text-gray-400">Superadmin</p>
                         </div>
                         <span class="text-gray-400">▾</span>
                     </button>
@@ -187,5 +183,81 @@ $menuItems = [
     </div>
 </div>
 
+{{-- Chart.js CDN --}}
+<div id="toast-root" class="fixed top-4 right-4 z-50 space-y-2"></div> <!-- Toast Container -->
+<!-- debut script relié à destroy-->
+<script>  
+(function () {
+    function getCsrfToken() {
+        const el = document.querySelector('meta[name="csrf-token"]');
+        return el ? el.getAttribute('content') : '';
+    }
+
+    async function deleteAbonnement(url, id, name, buttonEl) {
+        const row = document.getElementById(`ab-row-${id}`);
+        try {
+            buttonEl.disabled = true;
+            buttonEl.classList.add('opacity-50', 'cursor-not-allowed');
+
+            const res = await fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': getCsrfToken(),
+                    'Accept': 'application/json'
+                }
+            });
+// 🔁 Rechargement si succès (OK, 204 ou redirection 302)
+if (res.ok || res.status === 204 || res.status === 302) {
+    location.reload();
+    return; // on stoppe la suite pour éviter l'animation inutile
+}
+
+
+            if (!res.ok && res.status !== 204) {
+                let detail = '';
+                try { detail = await res.text(); } catch (e) {}
+                throw new Error(detail || `Erreur HTTP ${res.status}`);
+            }
+
+            // Supprime la ligne (effet léger)
+            if (row) {
+                row.classList.add('transition', 'duration-200', 'opacity-0', 'scale-95');
+                setTimeout(() => row.remove(), 200);
+            }
+
+            // Toast simple (optionnel)
+            console.log(`Offre "${name}" supprimée.`);
+
+        } catch (err) {
+            console.error(err);
+            alert(`Suppression impossible : ${err.message || 'erreur inconnue'}`);
+        } finally {
+            buttonEl.disabled = false;
+            buttonEl.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+    }
+
+    // Délégation d'événement : un seul listener pour tous les boutons .btn-delete-ab
+    document.addEventListener('click', function (e) {
+        const btn = e.target.closest('.btn-delete-ab');
+        if (!btn) return;
+
+        const id = btn.dataset.id;
+        const url = btn.dataset.url;
+        const name = btn.dataset.name || 'cet abonnement';
+
+        if (!url || !id) {
+            alert('Données manquantes pour la suppression.');
+            return;
+        }
+
+        const ok = confirm(`Voulez-vous vraiment supprimer l'abonnement "${name}" ?`);
+        if (!ok) return;
+
+        deleteAbonnement(url, id, name, btn);
+    });
+})();
+</script>
+<!-- fin script relié à destroy-->
 </body>
 </html>
