@@ -99,9 +99,12 @@
             <!-- REGISTER -->
             <div class="mt-6 text-center text-lg">
                 <span class="text-zinc-900">Don’t have an account? </span>
-                <a href="#" class="text-sky-900 font-bold hover:underline">
-                    Register
-                </a>
+
+<a href="{{ route('register') }}" class="text-sky-900 font-bold">
+    Register
+</a>
+
+
             </div>
         </div>
     </div>

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Role;
-use App\Models\Projet; 
+use App\Models\Projet;
 class User extends Authenticatable
 {
     use Notifiable;
@@ -18,15 +18,17 @@ class User extends Authenticatable
     protected $hidden = ['password'];
 
     protected $fillable = [
-        'nom',
-        'prenom',
-        'email',
-        'phone',
-        'password',
-        'date_naissance',
-        'profession',
-        'photo'
-    ];
+    'nom',
+    'prenom',
+    'email',
+    'phone',
+    'password',
+    'date_naissance',
+    'profession',
+    'photo',
+    'id_role',
+];
+
 
     public function getAuthPassword()
     {

@@ -12,23 +12,30 @@
         </h1>
 
         <p class="mt-6 text-[18px] leading-[28px] text-gray-600 max-w-[640px]">
-          Votre espace pour créer, planifier et livrer.  
+          Votre espace pour créer, planifier et livrer.
           <br> Une plateforme. Tous vos projets.
         </p>
 
         <div class="mt-10 flex gap-6">
             <!-- Get Started Button -->
-            <button class="bg-cyan-500 text-white px-10 py-4 rounded-xl text-[16px] 
+            <button class="bg-cyan-500 text-white px-10 py-4 rounded-xl text-[16px]
                           hover:bg-white hover:text-cyan-500 hover:border hover:border-cyan-500 transition">
                 Get Started
             </button>
 
             <!-- Login Link as Button -->
-            <a href="{{ route('login') }}" 
+            <a href="{{ route('login') }}"
               class="border border-black px-10 py-4 rounded-xl text-[16px] inline-block text-center
                       hover:bg-cyan-500 hover:text-white transition">
                 Login
             </a>
+            <a href="{{ route('register') }}"
+   class="bg-cyan-500 text-white px-10 py-4 rounded-xl hover:bg-cyan-600">
+    Sign Up
+</a>
+
+
+
         </div>
 
 
