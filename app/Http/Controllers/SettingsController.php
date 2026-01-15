@@ -51,7 +51,7 @@ class SettingsController extends Controller
         unset($data['password']);
     }
 
-    $user->update($data);
+    $user->update ($data);
 
     return back()->with('success', 'Profil mis à jour avec succès.');
 }
