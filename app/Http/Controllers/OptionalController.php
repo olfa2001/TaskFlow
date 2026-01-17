@@ -5,58 +5,55 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Abonnement;
+use App\Models\Role;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 
 class OptionalController extends Controller
 {
-    // Show optional form
+    // SHOW OPTIONAL FORM
     public function show($user_id)
     {
         $user = User::findOrFail($user_id);
         $abonnements = Abonnement::all();
+        $roles = Role::all(); // ✅ must be passed to view
 
-        return view('auth.optional', compact('user', 'abonnements'));
+        return view('auth.optional', compact('user', 'abonnements', 'roles'));
     }
 
-    // Store optional info
+    // STORE OPTIONAL INFO
     public function store(Request $request, $user_id)
     {
         $request->validate([
             'phone' => 'nullable|string|max:20',
             'profession' => 'nullable|string|max:150',
             'bio' => 'nullable|string|max:255',
-            'photo' => 'nullable|image|max:2048',
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'id_abonnement' => 'required|exists:abonnements,id',
+            'id_role' => 'required|exists:roles,id',
         ]);
 
         $user = User::findOrFail($user_id);
 
-        // Handle photo upload
-        $photoPath = $user->photo;
         if ($request->hasFile('photo')) {
-            $photoPath = $request->file('photo')->store('photos', 'public');
+            $path = $request->file('photo')->store('photos', 'public');
+            $user->photo = $path;
         }
 
-        // Update user info
-        $user->update([
-            'phone' => $request->phone,
-            'profession' => $request->profession,
-            'bio' => $request->bio,
-            'photo' => $photoPath,
-        ]);
-
-        // Insert subscription (example: 1 month)
-        $dateDebut = date('Y-m-d');
-        $dateFin = date('Y-m-d', strtotime('+1 month', strtotime($dateDebut)));
+        $user->phone = $request->phone;
+        $user->profession = $request->profession;
+        $user->bio = $request->bio;
+        $user->id_abonnement = $request->id_abonnement;
+        $user->id_role = $request->id_role;
+        $user->save();
 
         DB::table('user_abonnement')->insert([
             'id_inscri' => $user->id,
             'id_abonnement' => $request->id_abonnement,
-            'date_debut' => $dateDebut,
-            'date_fin' => $dateFin,
+            'date_debut' => now()->toDateString(),
+            'date_fin' => now()->addMonth()->toDateString(),
         ]);
 
-        return redirect()->route('home')->with('success', 'Optional info saved!');
+          return redirect()->route('login')
+                         ->with('success', 'Inscription terminée. Connectez-vous.');
     }
 }

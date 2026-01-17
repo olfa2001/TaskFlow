@@ -23,7 +23,7 @@
                 <label class="block text-xl mb-2">Photo de profil</label>
                 <input type="file" name="photo" class="w-full mb-4">
 
-                <label class="block text-xl mb-2">Abonnement *</label>
+                <label class="block text-xl mb-2">Abonnement </label>
                 <select name="id_abonnement" required class="w-full border-b-2 py-2 mb-4">
                     <option value="">-- Choisir --</option>
                     @foreach($abonnements as $abonnement)
@@ -33,11 +33,25 @@
                     @endforeach
                 </select>
 
+<label class="block text-xl mb-2">Rôle </label>
+<select name="id_role" required class="w-full border-b-2 py-2 mb-4">
+    <option value="">-- Choisir un rôle --</option>
+    @foreach($roles as $role)
+        <option value="{{ $role->id }}">
+            {{ $role->role }} — {{ $role->description }}
+        </option>
+    @endforeach
+</select>
+
                 <button type="submit" class="w-full py-4 bg-cyan-500 text-white text-2xl font-bold rounded-lg hover:bg-sky-700 transition">
                     Save
                 </button>
             </form>
         </div>
     </div>
+    <!-- RIGHT IMAGE -->
+    <div class="w-full flex items-center justify-center -ml-20">
+        <img src="{{ asset('images/login-right.png') }}" class="h-[520px] object-contain">
+
 </div>
 @endsection

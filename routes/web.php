@@ -81,3 +81,4 @@ Route::post('/register', [RegisterController::class, 'store'])->name('register.s
 // Optional info second page
 Route::get('/register/optional/{user_id}', [OptionalController::class, 'show'])->name('register.optional');
 Route::post('/register/optional/{user_id}', [OptionalController::class, 'store'])->name('register.optional.store');
+

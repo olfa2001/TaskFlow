@@ -21,19 +21,19 @@
             <form method="POST" action="{{ route('register.store') }}">
                 @csrf
 
-                <label class="block text-xl mb-2">Prénom *</label>
+                <label class="block text-xl mb-2">Prénom </label>
                 <input type="text" name="prenom" value="{{ old('prenom') }}" required class="w-full border-b-2 py-2 mb-4">
 
                 <label class="block text-xl mb-2">Nom</label>
                 <input type="text" name="nom" value="{{ old('nom') }}" class="w-full border-b-2 py-2 mb-4">
 
-                <label class="block text-xl mb-2">Email *</label>
+                <label class="block text-xl mb-2">Email </label>
                 <input type="email" name="email" value="{{ old('email') }}" required class="w-full border-b-2 py-2 mb-4">
 
-                <label class="block text-xl mb-2">Password *</label>
+                <label class="block text-xl mb-2">Password </label>
                 <input type="password" name="password" required class="w-full border-b-2 py-2 mb-4">
 
-                <label class="block text-xl mb-2">Confirm Password *</label>
+                <label class="block text-xl mb-2">Confirm Password </label>
                 <input type="password" name="password_confirmation" required class="w-full border-b-2 py-2 mb-4">
 
                 <input type="hidden" name="id_role" value="2">
@@ -44,5 +44,9 @@
             </form>
         </div>
     </div>
+    <!-- RIGHT IMAGE -->
+    <div class="w-full flex items-center justify-center -ml-20">
+        <img src="{{ asset('images/login-right.png') }}" class="h-[520px] object-contain">
+
 </div>
 @endsection
