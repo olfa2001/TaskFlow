@@ -90,7 +90,7 @@
                     <button type="submit"
                             class="flex items-center gap-4 py-3 px-4 w-full hover:text-primary">
                         <img src="{{ asset('images/ic_signout.png') }}" class="w-6 h-6">
-                        Sign out
+                        Se déconnecter
                     </button>
                 </form>
             </li>

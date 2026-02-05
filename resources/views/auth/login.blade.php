@@ -101,7 +101,7 @@
                 <span class="text-zinc-900">Don’t have an account? </span>
                 <a href="{{ route('register') }}"
  class="text-sky-900 font-bold hover:underline">
-    Register
+    S'inscrire
 </a>
 
             </div>

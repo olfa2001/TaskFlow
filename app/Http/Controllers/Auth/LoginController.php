@@ -10,7 +10,7 @@ use App\Models\User;
 
 class LoginController extends Controller
 {
-    
+
     // Show login form
     public function showLoginForm()
     {
@@ -53,7 +53,7 @@ class LoginController extends Controller
                 return redirect()->route('dashboard.admin');
             case 'Superviseur':
                 return redirect()->route('dashboard.superviseur');
-            case 'Contributeur de projet':
+            case 'Contributeur':
                 return redirect()->route('dashboard.contributeur');
             default:
                 return redirect()->route('home');

@@ -28,6 +28,24 @@ Route::get('/', function () {
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+ /*
+|--------------------------------------------------------------------------
+| Registration (First page + Optional page)
+|--------------------------------------------------------------------------
+*/
+
+
+    Route::get('/register', [RegisterController::class, 'showRegistrationForm'])
+        ->name('register');
+
+    Route::post('/register', [RegisterController::class, 'store'])
+        ->name('register.store');
+
+    Route::get('/register/optional/{user_id}', [OptionalController::class, 'show'])
+        ->name('register.optional');
+
+    Route::post('/register/optional/{user_id}', [OptionalController::class, 'store'])
+        ->name('register.optional.store');
 
 /*
 |--------------------------------------------------------------------------
@@ -185,25 +203,6 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/contributeur/settings/update-bio', [ProfileController::class, 'updateBio'])
         ->name('contributeur.updateBio');
-        /*
-|--------------------------------------------------------------------------
-| Registration (First page + Optional page)
-|--------------------------------------------------------------------------
-*/
 
-
-    // REGISTER
-    Route::get('/register', [RegisterController::class, 'showRegistrationForm'])
-        ->name('register');
-
-    Route::post('/register', [RegisterController::class, 'store'])
-        ->name('register.store');
-
-    // OPTIONAL
-    Route::get('/register/optional/{user_id}', [OptionalController::class, 'show'])
-        ->name('register.optional');
-
-    Route::post('/register/optional/{user_id}', [OptionalController::class, 'store'])
-        ->name('register.optional.store');
 });
 

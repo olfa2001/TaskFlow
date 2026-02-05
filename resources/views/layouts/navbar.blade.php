@@ -19,14 +19,14 @@
         <a href="{{ route('login') }}"
            class="bg-cyan-500 text-white px-6 py-2 rounded-xl text-[16px] inline-block text-center
                   hover:bg-white hover:text-cyan-500 hover:border hover:border-cyan-500 transition">
-            Login
+            Connexion
         </a>
 
         <!-- Sign Up -->
         <a href="{{ route('register') }}"
            class="border border-cyan-500 text-cyan-500 bg-white px-6 py-2 rounded-xl text-[16px]
                   hover:bg-cyan-500 hover:text-white transition">
-            Sign Up
+            Inscription
         </a>
     </div>
 </header>

@@ -7,8 +7,10 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Projet;
 use App\Models\Tache;
+use App\Models\Tache as ModelsTache;
 use Carbon\Carbon;
 use DB;
+use App\Models\Task;
 
 class DashboardController extends Controller
 {
@@ -303,5 +305,16 @@ public function settings()
         'recentTasks'
     ));
 }
+public function index()
+{
+    $user = Auth::user();
 
+    // tâches assignées au contributeur
+    $tasks = Tache::with('projet')
+        ->where('id_contributeur', $user->id)
+        ->orderBy('deadline', 'asc')
+        ->get();
+
+    return view('dashboard.contributeur', compact('tasks'));
+}
 }
