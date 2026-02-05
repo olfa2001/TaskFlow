@@ -10,25 +10,7 @@ use App\Models\User;
 
 class LoginController extends Controller
 {
-    protected function authenticated($request, $user)
-    {
-        // Vérifie le rôle de l'utilisateur
-        if ($user->role->name === 'contributeur') {
-            return redirect()->route('dashboard.contributeur'); // Redirige vers le dashboard contributeur
-        }
-
-        // Autres rôles (exemple chef ou superviseur)
-        if ($user->role->name === 'chef') {
-            return redirect()->route('dashboard.chef');
-        }
-
-        if ($user->role->name === 'superviseur') {
-            return redirect()->route('dashboard.superviseur');
-        }
-
-        // Par défaut
-        return redirect('/home');
-    }
+    
     // Show login form
     public function showLoginForm()
     {

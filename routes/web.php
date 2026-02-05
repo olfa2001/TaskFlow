@@ -190,12 +190,20 @@ Route::middleware(['auth'])->group(function () {
 | Registration (First page + Optional page)
 |--------------------------------------------------------------------------
 */
-// REGISTER
-Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
-Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
 
-// OPTIONAL
-Route::get('/register/optional/{user_id}', [OptionalController::class, 'show'])->name('register.optional');
-Route::post('/register/optional/{user_id}', [OptionalController::class, 'store'])->name('register.optional.store');
 
+    // REGISTER
+    Route::get('/register', [RegisterController::class, 'showRegistrationForm'])
+        ->name('register');
+
+    Route::post('/register', [RegisterController::class, 'store'])
+        ->name('register.store');
+
+    // OPTIONAL
+    Route::get('/register/optional/{user_id}', [OptionalController::class, 'show'])
+        ->name('register.optional');
+
+    Route::post('/register/optional/{user_id}', [OptionalController::class, 'store'])
+        ->name('register.optional.store');
 });
+

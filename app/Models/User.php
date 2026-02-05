@@ -29,7 +29,8 @@ class User extends Authenticatable
         'password',
         'date_naissance',
         'profession',
-        'photo'
+        'photo',
+        'id_role'
     ];
 
     /* =======================
@@ -105,7 +106,8 @@ class User extends Authenticatable
             Tache::class,
             'tache_contributeur',
             'user_id',
-            'tache_id'
+            'tache_id',
+            'role_id'
         );
     }
 
